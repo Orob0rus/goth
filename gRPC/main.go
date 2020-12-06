@@ -26,6 +26,8 @@ type ConnAttr struct {
 	Secrets   SSLCerts `json:"secrets"`
 }
 
+// make this function intialize the values based on yaml read
+// or else revert to a default set of values
 func newConnAttr() *ConnAttr {
 	return &ConnAttr{
 		Host:      "0.0.0.0",
@@ -82,10 +84,12 @@ func newServerwithServices(cleanup chan bool) {
 			log.Fatalf("Failed to serve")
 		}
 	}()
-	<-cleanup
-	if err := (*lis).Close(); err != nil {
-		log.Fatalf("Error on closing the listener : %v", err)
-	}
-	s.Stop()
-	cleanup <- true
+	go func() {
+		<-cleanup
+		if err := (*lis).Close(); err != nil {
+			log.Fatalf("Error on closing the listener : %v", err)
+		}
+		s.Stop()
+		cleanup <- true
+	}()
 }
