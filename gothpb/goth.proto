@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package goth;
+option go_package = "gothpb";
+
+message Secret {
+    string token = 1;
+    string refresh_token = 2;
+    string passcode = 3;
+    enum Type {
+        JWT = 0;
+        Password = 1;
+        GoogleToken = 2;
+        FacebookToken = 3;
+        OTP = 4;
+    }
+    Type type = 4;
+}
+
+message Credentials {
+    Secret secret = 0;
+    string username = 1;
+    string email = 2;
+    string id = 3;
+}
+
+message Name {
+    string first_name = 0;
+    string last_name = 1;
+    string middle_name=2;
+}
+
+message User {
+    // unique identifier for the user
+    string uuid = 0;
+    // username of the user
+    string username = 1;
+    // user's name
+    Name user_name = 2;
+        
+}
