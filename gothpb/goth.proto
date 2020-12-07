@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package goth;
-option go_package = "gothpb";
+option go_package = "github.com/dbot5/goth/gothpb";
 
 message Secret {
     string token = 1;
@@ -17,25 +17,151 @@ message Secret {
     Type type = 4;
 }
 
+message Identifier {
+    string uuid = 1;
+    string username = 2;
+    repeated string email = 3;
+    repeated string contact_number = 4;
+}
+
 message Credentials {
-    Secret secret = 0;
-    string username = 1;
-    string email = 2;
-    string id = 3;
+    Secret secret=1;
+    Identifier identifier=2;
+
 }
 
 message Name {
-    string first_name = 0;
-    string last_name = 1;
-    string middle_name=2;
+    string first_name = 1;
+    string last_name = 2;
+    string middle_name=3;
+}
+
+message Profiles {
+    string google = 1;
+    string apple = 2;
+    string microsoft = 3;
+    string facebook = 4;
+    string linkedin = 5;
+    string instagram = 6;
+}
+
+message Address {
+    string house_number = 1;
+    string building_name = 2;
+    string street_name = 3;
+    string address_1 = 4;
+    string city=5;
+    string state =6;
+    string country = 7;
+    int64 zip_code=8;
+    string address_2 = 9;
+}
+
+message Role {
+    string role_name = 1;
+    string role_type = 2;
+    repeated string role_meta_data = 3;
+}
+
+message Roles {
+    repeated Role role = 1;
 }
 
 message User {
     // unique identifier for the user
-    string uuid = 0;
+    Identifier identifier = 1;
     // username of the user
-    string username = 1;
+    Secret secret = 2;
+    Roles roles = 3;
     // user's name
-    Name user_name = 2;
-        
+    Name user_name = 4;
+    Profiles user_profiles = 5;
+    Address current_address = 6;
+    Address permanent_address = 7;
+
+}
+
+message ServiceResponse {
+    string Status=1;
+    string Error=2;
+    repeated string metadata=3;
+}
+
+message RegisterationRequest {
+    Credentials candidate=1;
+}
+
+message RegisterationResponse {
+    ServiceResponse response=1;
+}
+
+message SecretResetRequest {
+    Credentials creds=1;
+}
+
+message SecretResetResponse {
+    ServiceResponse response = 1;
+}
+
+message LogInRequest {
+    Credentials creds=1;
+}
+
+message LogInResponse {
+    ServiceResponse response = 1;
+    Credentials creds=2;
+}
+
+message UpdateProfileRequest {
+    User user_profile=1;
+}
+
+message UpdateProfileResponse {
+    ServiceResponse response=1;
+}
+
+message GetRolesRequest {
+    Credentials creds=1;
+}
+
+message GetRolesResponse {
+    Roles roles=1;
+    Identifier user=2;
+    ServiceResponse response = 3;
+}
+
+message UpdateRolesRequest {
+    Credentials creds=1;
+    Roles roles=2;
+}
+
+message UpdateRolesResponse {
+    ServiceResponse response=1;
+}
+
+message LogOutRequest {
+    Credentials creds=1;
+}
+
+message LogOutResponse {
+    ServiceResponse response=1;
+}
+
+message DeleteAccountRequest {
+    Credentials creds=1;
+}
+
+message DeleteAccountResponse {
+    ServiceResponse response=1;
+}
+
+
+service GothService {
+    rpc Registeration(RegisterationRequest) returns (RegisterationResponse) {};
+    rpc SecretReset(SecretResetRequest) returns (SecretResetResponse) {};
+    rpc LogIn(LogInRequest) returns (LogInResponse) {};
+    rpc LogOut(LogOutRequest) returns (LogOutResponse) {};
+    rpc GetRoles(GetRolesRequest) returns (GetRolesResponse) {};
+    rpc UpdateRoles(UpdateRolesRequest) returns (UpdateRolesResponse) {};
+    rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {};
 }
